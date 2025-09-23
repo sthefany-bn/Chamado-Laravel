@@ -61,39 +61,23 @@ class PerfilController extends Controller
         return redirect()->route('login')->with('success', 'Logout realizado com sucesso!');
     }
 
-    public function atualizar(Request $request, $id)
-    {
-        $perfil = Perfil::findOrFail($id);
-
-        if ($request->isMethod('get')) {
-            return view('usuario.editar', ['perfil' => $perfil]);
-        }
-
-        $request->validate([
-            'nome_completo' => 'required|string|max:255',
-            'username' => 'required|string|max:255|unique:users,username,' . $perfil->user_id,
-        ]);
-
-        $perfil->nome_completo = $request->nome_completo;
-        $perfil->save();
-
-        $user = $perfil->user;
-        $user->username = $request->username;
-        $user->save();
-
-        return redirect()->route('adm/ver_funcionarios')->with('success', 'Usuário atualizado com sucesso!');
-    }
-
     public function verFuncionarios(Request $request)
     {
-        $query = Perfil::where('user_id', '!=', Auth::id());
+        $query = Perfil::where('user_id', '!=', Auth::id())
+            ->whereHas('user', function ($q) {
+                $q->where('name', '!=', 'Admin');
+            });
 
+        // Se veio filtro 'adm' no request, adiciona condição
         if ($request->has('adm')) {
             $query->where('adm', $request->input('adm'));
         }
 
+        // Ordena e executa a query
         $perfil = $query->orderBy('nome_completo')->get();
+
         $quantidade = $perfil->count();
+
         return view('adm/ver_funcionarios', compact('perfil', 'quantidade'));
     }
 
@@ -106,15 +90,14 @@ class PerfilController extends Controller
         }
 
         if ($request->isMethod('post')) {
-            
-                $perfil->nome_completo = $request->input('nome_completo');
-                $perfil->save();
 
-                $perfil->user->username = $request->input('username');
-                $perfil->user->save();
+            $perfil->nome_completo = $request->input('nome_completo');
+            $perfil->save();
 
-                return redirect()->route('ver_funcionarios')->with('success', 'Funcionário atualizado com sucesso!');
+            $perfil->user->username = $request->input('username');
+            $perfil->user->save();
 
+            return redirect()->route('ver_funcionarios')->with('success', 'Funcionário atualizado com sucesso!');
         }
     }
 

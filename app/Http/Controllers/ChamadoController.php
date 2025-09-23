@@ -107,7 +107,7 @@ class ChamadoController extends Controller
             $chamado->save();
             return redirect()->route('meus_chamados');
         } else {
-            return redirect()->route('meus_chamados')->with('error', 'Esse chamado não pode ser cancelado pois já foi iniciado');
+            return redirect()->route('meus_chamados')->with('error', 'Esse chamado não pode ser cancelado pois já foi iniciado!');
         }
     }
 
@@ -129,14 +129,20 @@ class ChamadoController extends Controller
     public function verChamados(Request $request)
     {
         $status = $request->query('status');
-        $chamados = $status 
-            ? Chamado::where('status', $status)->get()
-            : Chamado::all();
+
+        $query = Chamado::orderBy('titulo', 'asc');
+
+        if ($status) {
+            $query->where('status', $status);
+        }
+
+        $chamados = $query->get();
 
         $quantidade = $chamados->count();
 
         return view('adm/ver_chamado', compact('chamados', 'quantidade'));
     }
+
 
     public function tornarAdm($id)
     {
@@ -144,7 +150,7 @@ class ChamadoController extends Controller
         $perfil->adm = true;
         $perfil->save();
 
-        return redirect()->route('funcionarios.ver')->with('success', "Usuário {$perfil->nome_completo} agora é um administrador!");
+        return redirect()->route('funcionarios.ver')->with('success', "{$perfil->nome_completo} agora é um administrador!");
     }
 
     public function retirarAdm($id)
@@ -153,14 +159,15 @@ class ChamadoController extends Controller
         $perfil->adm = false;
         $perfil->save();
 
-        return redirect()->route('funcionarios.ver')->with('success', "Usuário {$perfil->nome_completo} não é mais um administrador!");
+        return redirect()->route('funcionarios.ver')->with('success', "{$perfil->nome_completo} não é mais um administrador!");
     }
 
     public function minhasTarefas()
     {
         $perfil = Auth::user()->perfil;
         $chamados = Chamado::where('responsavel_id', $perfil->id)
-            ->where('status', '!=', 'cancelado')
+            ->whereNotIn('status', ['cancelado', 'finalizado'])
+            ->orderBy('data', 'desc')
             ->get();
 
         $quantidade = $chamados->count();

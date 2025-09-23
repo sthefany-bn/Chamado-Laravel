@@ -10,11 +10,17 @@ class Chamado extends Model
     use HasFactory;
     protected $fillable = ['titulo', 'data', 'status', 'descricao'];
 
-    public function autor(){
+    protected $casts = [
+        'data' => 'datetime',
+    ];
+
+    public function autor()
+    {
         return $this->belongsTo(User::class, 'autor_id');
     }
 
-    public function responsavel(){
+    public function responsavel()
+    {
         return $this->belongsTo(User::class,  'responsavel_id');
     }
 

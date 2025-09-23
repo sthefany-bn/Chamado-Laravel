@@ -22,7 +22,7 @@
             @foreach ($chamados as $i)  
                 <tr>
                     <td>{{ $i->titulo }}</td>
-                    <td>{{ $i->data }}</td>
+                    <td>{{ $i->data->format('d/m/Y H:i') }}</td>
                     <td>
                         @if ($i->status == 'finalizado')
                             <span class="badge bg-success">{{ $i->status }}</span>

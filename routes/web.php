@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\ChamadoController;
 use App\Http\Controllers\PerfilController;
-use App\Models\Perfil;
 use Illuminate\Support\Facades\Route;
 
 //Cadastro
