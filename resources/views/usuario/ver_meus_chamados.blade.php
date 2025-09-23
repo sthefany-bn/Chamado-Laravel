@@ -1,71 +1,151 @@
-@extends('layout') {{modelo}}
+@extends('modelo')
 
 @section('title', 'Meus Chamados')
 
 @section('content')
-<h1>Meus Chamados</h1>
-
-<div class="mb-3">
-    <span class="badge bg-primary">Ativos: {{ $qtd_ativos }}</span>
-    <span class="badge bg-success">Finalizados: {{ $qtd_finalizados }}</span>
-    <span class="badge bg-danger">Cancelados: {{ $qtd_cancelados }}</span>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="fw-bold mb-0">Chamados de <span class="text-primary">{{ $perfil->nome_completo }}</span></h1>
+    <a href="{{ route('fazer_chamado') }}" class="btn btn-primary">
+        <i class="bi bi-plus-circle me-1"></i>
+        Novo
+    </a>
 </div>
+<hr>
 
-<a href="{{ route('fazer_chamado') }}" class="btn btn-success mb-3">
-    <i class="bi bi-plus-circle"></i> Criar Novo Chamado
-</a>
+@if ($ativos || $cancelados || $finalizados)
+    @if ($ativos)
+        <div class="d-flex align-items-center mb-3">
+            <i class="bi bi-lightning-charge-fill me-2 fs-3 text-warning"></i>
+            <h3 class="fw-bold mb-0">Ativos</h3>
+        </div>
+        <table class="table table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Titulo</th>
+                    <th>Data do pedido</th>
+                    <th>Responsável</th>
+                    <th>Status</th>
+                    <th class="text-center">Ação</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($chamados as $i)
+                    @if ($i->status != 'finalizado' && $i->status != 'cancelado')
+                        <tr>
+                            <td>{{ $i->titulo }}</td>
+                            <td>{{ $i->data }}</td>
+                            <td>{{ $i->responsavel->name }}</td>
+                            <td>
+                                @if ($i->status == 'em_andamento')
+                                    <span class="badge bg-warning text-black">{{ $i->status }}</span>
+                                @else
+                                    <span class="badge bg-secondary">{{ $i->status }}</span>
+                                @endif
+                            </td>
+                            <td class="text-center">
+                                <a href="{{ route('editar_chamados', $i->id) }}" class="btn btn-sm btn-success">Editar</a>
+                                <a href="{{ route('ver_detalhes', $i->id) }}" class="btn btn-sm btn-primary px-3">Detalhes</a>                                
+                                <form action="{{ route('cancelar_chamado', $i->id) }}" method="post" class="d-inline"
+                                    onsubmit="return confirmarCancelar('{{ $i->titulo }}');">
+                                    @csrf
+                                    <button type="submit" class="btn btn-sm btn-danger">Cancelar</button>
+                                </form>
+                            </td>
+                        </tr>
+                    @endif
+                @endforeach
+            </tbody>
+        </table>
+    @else
+        <div class="text-center">
+            <i class="bi bi-exclamation-circle fs-1 text-muted"></i>
+            <p>Nenhum chamado ativo</p>
+            <a class="btn btn-sm btn-success" href="{{ route('fazer_chamado') }}">Fazer chamado</a>
+        </div>
+        <hr>
+    @endif
 
-@if ($chamados->isEmpty())
-    <p>Você não tem chamados registrados.</p>
+    @if ($finalizados)
+        <div class="d-flex align-items-center mb-3">
+            <i class="bi bi-clipboard2-check me-2 fs-3 text-success"></i>
+            <h3 class="fw-bold mb-0">Finalizados</h3>
+        </div>
+        <table class="table table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Titulo</th>
+                    <th>Data do pedido</th>
+                    <th>Responsável</th>
+                    <th>Status</th>
+                    <th class="text-center">Ação</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($chamados as $i)
+                    @if ($i->status == 'finalizado')
+                        <tr>
+                            <td>{{ $i->titulo }}</td>
+                            <td>{{ $i->data }}</td>
+                            <td>{{ $i->responsavel->name }}</td>
+                            <td>
+                                <span class="badge bg-success">{{ $i->status }}</span>
+                            </td>
+                            <td class="text-center">
+                                <a href="{{ route('ver_detalhes', $i->id) }}" class="btn btn-sm btn-primary px-3">Detalhes</a>                                
+                            </td>
+                        </tr>
+                    @endif
+                @endforeach
+            </tbody>
+        </table>
+    @endif
+    
+    @if ($cancelados)
+        <div class="d-flex align-items-center mb-3">
+            <i class="bi bi-x-octagon-fill me-2 fs-3 text-danger"></i>
+            <h3 class="fw-bold mb-0">Cancelados</h3>
+        </div>
+        <table class="table table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Titulo</th>
+                    <th>Data do pedido</th>
+                    <th>Responsável</th>
+                    <th>Status</th>
+                    <th class="text-center">Ação</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($chamados as $i)
+                    @if ($i->status == 'cancelado')
+                        <tr>
+                            <td>{{ $i->titulo }}</td>
+                            <td>{{ $i->data }}</td>
+                            <td>{{ $i->responsavel->name }}</td>
+                            <td>
+                                <span class="badge bg-danger">{{ $i->status }}</span>
+                            </td>
+                            <td class="text-center">
+                                <a href="{{ route('ver_detalhes', $i->id) }}" class="btn btn-sm btn-primary px-3">Detalhes</a>                                
+                            </td>
+                        </tr>
+                    @endif
+                @endforeach
+            </tbody>
+        </table>
+    @endif
 @else
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Título</th>
-            <th>Status</th>
-            <th>Responsável</th>
-            <th>Data</th>
-            <th>Ações</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach ($chamados as $chamado)
-        <tr>
-            <td>{{ $chamado->titulo }}</td>
-            <td>
-                @php
-                    $statusClass = match ($chamado->status) {
-                        'nao_iniciado' => 'badge bg-secondary',
-                        'em_andamento' => 'badge bg-warning text-dark',
-                        'finalizado' => 'badge bg-success',
-                        'cancelado' => 'badge bg-danger',
-                        default => 'badge bg-info',
-                    };
-                @endphp
-                <span class="{{ $statusClass }}">{{ ucfirst(str_replace('_', ' ', $chamado->status)) }}</span>
-            </td>
-            <td>{{ $chamado->responsavel->nome_completo ?? 'Sem responsável' }}</td>
-            <td>{{ $chamado->data->format('d/m/Y H:i') }}</td>
-            <td>
-                <a href="{{ route('ver_detalhes', $chamado->id) }}" class="btn btn-info btn-sm" title="Ver detalhes">
-                    <i class="bi bi-eye"></i>
-                </a>
-                <a href="{{ route('editar_chamados', $chamado->id) }}" class="btn btn-primary btn-sm" title="Editar">
-                    <i class="bi bi-pencil"></i>
-                </a>
-
-                @if($chamado->status === 'nao_iniciado')
-                <a href="{{ route('cancelar_chamado', $chamado->id) }}" 
-                   class="btn btn-danger btn-sm" 
-                   onclick="return confirm('Tem certeza que deseja cancelar este chamado?');"
-                   title="Cancelar">
-                    <i class="bi bi-x-circle"></i>
-                </a>
-                @endif
-            </td>
-        </tr>
-        @endforeach
-    </tbody>
-</table>
+    <div class="text-center">
+        <br>
+        <i class="bi bi-inbox-fill fs-1 text-secondary"></i>
+        <p>Nenhum chamado cadastrado</p>
+        <a class="btn btn-sm btn-success" href="{% url 'fazer_chamado' %}">Fazer chamado</a>
+    </div>
 @endif
+
+<script>
+    function confirmarCancelar(nome) {
+        return confirm(`Tem certeza que deseja cancelar o chamado "${nome}"?`);
+    }
+</script>
 @endsection

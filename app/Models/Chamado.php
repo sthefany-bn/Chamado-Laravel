@@ -18,4 +18,8 @@ class Chamado extends Model
         return $this->belongsTo(User::class,  'responsavel_id');
     }
 
+    public function arquivos()
+    {
+        return $this->hasMany(Arquivo::class);
+    }
 }

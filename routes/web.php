@@ -5,38 +5,36 @@ use App\Http\Controllers\PerfilController;
 use App\Models\Perfil;
 use Illuminate\Support\Facades\Route;
 
+//Cadastro
+Route::get('/usuario/cadastrar', [PerfilController::class, 'cadastrar'])->name('cadastrar');
+Route::post('/usuario/cadastrar', [PerfilController::class, 'cadastrar']);
+
+//Login
+Route::get('/usuario/login', [PerfilController::class, 'login'])->name('login');
+Route::post('/usuario/login', [PerfilController::class, 'login']);
+
+//Sair
+Route::post('/usuario/sair', [PerfilController::class, 'sair'])->name('sair');
+
 Route::middleware(['auth'])->group(function () {
 
     //Chamados
-    Route::get('/fazer_chamado', [ChamadoController::class, 'create'])->name('fazer_chamado');
-    Route::post('/fazer_chamado', [ChamadoController::class, 'store'])->name('fazer_chamado_store');
-
+    Route::get('/fazer_chamado', [ChamadoController::class, 'fazerChamado'])->name('fazer_chamado');
+    Route::post('/fazer_chamado', [ChamadoController::class, 'fazerChamado'])->name('fazer_chamado_store');
     Route::get('/', [ChamadoController::class, 'meusChamados'])->name('meus_chamados');
-    Route::get('/editar_chamado/{id}', [ChamadoController::class, 'edit'])->name('editar_chamados');
-    Route::post('/editar_chamado/{id}', [ChamadoController::class, 'update'])->name('atualizar_chamados');
-
-    Route::get('/ver_detalhes/{id}', [ChamadoController::class, 'show'])->name('ver_detalhes');
-    Route::get('/cancelar_chamado/{id}', [ChamadoController::class, 'cancel'])->name('cancelar_chamado');
+    Route::get('/editar_chamado/{id}', [ChamadoController::class, 'editarChamado'])->name('editar_chamados');
+    Route::post('/editar_chamado/{id}', [ChamadoController::class, 'editarChamado'])->name('atualizar_chamados');
+    Route::get('/ver_detalhes/{id}', [ChamadoController::class, 'verDetalhes'])->name('ver_detalhes');
+    Route::post('/cancelar_chamado/{id}', [ChamadoController::class, 'cancelarChamado'])->name('cancelar_chamado');
     Route::get('/remover_arquivo/{id}', [ChamadoController::class, 'removerArquivo'])->name('remover_arquivo');
 
     //Admin
-    Route::get('/ver_chamados', [ChamadoController::class, 'verTodos'])->name('ver_chamados');
+    Route::get('/ver_chamados', [ChamadoController::class, 'verChamados'])->name('ver_chamados');
     Route::get('/ver_funcionarios', [PerfilController::class, 'verFuncionarios'])->name('ver_funcionarios');
-    Route::get('/editar_funcionarios', [PerfilController::class, 'editarFuncionarios'])->name('editar_funcionarios');
+    Route::get('/editar_funcionarios/{id}', [PerfilController::class, 'editarFuncionarios'])->name('editar_funcionarios');
+    Route::post('/editar_funcionarios/{id}', [PerfilController::class, 'editarFuncionarios'])->name('atualizar_funcionarios');
     Route::get('/tornar_adm/{id}', [PerfilController::class, 'tornarAdm'])->name('tornar_adm');
     Route::get('/retirar_adm/{id}', [PerfilController::class, 'retirarAdm'])->name('retirar_adm');
     Route::get('/ver_minhas_tarefas', [ChamadoController::class, 'minhasTarefas'])->name('ver_minhas_tarefas');
     Route::get('/ifc/{id}/{status}', [ChamadoController::class, 'ifc'])->name('ifc'); //iniciar, finalizar, cancelar
-    
-    //Cadastro
-    Route::get('/usuario/cadastrar', [PerfilController::class, 'cadastrar'])->name('register');
-    Route::post('/usuario/cadastrar', [PerfilController::class, 'cadastrar']);
-    
-    //Login
-    Route::get('/usuario/login', [PerfilController::class, 'login'])->name('login');
-    Route::post('/usuario/login', [PerfilController::class, 'login']);
-
-    //Sair
-    Route::post('/usuario/sair', [PerfilController::class, 'sair'])->name('logout');
-
 });

@@ -11,12 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('perfils', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string('nome_completo');
-            $table->boolean('adm')->default(false);
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->timestamps();
+        Schema::table('arquivos', function (Blueprint $table) {
+            $table->string('nome_original')->nullable();
         });
     }
 
@@ -25,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('perfils');
+        Schema::table('arquivos', function (Blueprint $table) {
+            $table->dropColumn('nome_original');
+        });
     }
 };

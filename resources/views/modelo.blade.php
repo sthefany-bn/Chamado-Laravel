@@ -14,11 +14,11 @@
         <nav class="navbar bg-primary">
             <div class="container-fluid">
                 @if (Auth::user() && Auth::user()->perfil->adm)
-                <a href="{{ route('indexChamado') }}" class="navbar-brand fw-bold text-white">
+                <a href="{{ route('ver_chamados') }}" class="navbar-brand fw-bold text-white">
                     Chamados - Usuário Master
                 </a>
                 @else
-                <a href="{{ route('ver_meus_chamadosChamado') }}" class="navbar-brand fw-bold text-white">
+                <a href="{{ route('meus_chamados') }}" class="navbar-brand fw-bold text-white">
                     Chamados
                 </a>
                 @endif
@@ -30,7 +30,7 @@
                         </a>
                         <ul class="dropdown-menu">
                             <li>
-                                <a class="dropdown-item" href="{{ route('indexChamado') }}">
+                                <a class="dropdown-item" href="{{ route('ver_chamados') }}">
                                     <i class="bi bi-card-list me-2 text-info"></i>Todos chamados
                                 </a>
                             </li>
@@ -45,27 +45,29 @@
                                 </a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="{{ route('ver_meus_chamadosChamado') }}">
+                                <a class="dropdown-item" href="{{ route('meus_chamados') }}">
                                     <i class="bi bi-person-lines-fill me-2 text-primary"></i>Meus chamados
                                 </a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="{{ route('createChamado') }}">
+                                <a class="dropdown-item" href="{{ route('fazer_chamado') }}">
                                     <i class="bi bi-plus-circle me-2 text-black"></i> Criar chamado
                                 </a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="{{ route('editarUsuario', Auth::id()) }}">
+                                <a class="dropdown-item" href="{{ route('editar_funcionarios', Auth::id()) }}">
                                     <i class="bi bi-pencil-square me-2 text-danger"></i>Editar meu perfil
                                 </a>
                             </li>
                         </ul>
                     </div>
                     @endif
-                    <form action="{{ route('logout') }}" method="POST" onsubmit="return confirmarSair('{{ Auth::user()->name }}');">
+                    @auth
+                    <form action="{{ route('sair') }}" method="POST" onsubmit="return confirmarSair('{{ Auth::user()->name }}');">
                         @csrf
                         <button type="submit" class="btn btn-light fw-bold me-1">Sair</button>
                     </form>
+                    @endauth
                 </div>
             </div>
         </nav>
@@ -87,7 +89,7 @@
         </div>
         @endif
 
-        {{-- Conteúdo específico da página --}}
+        {{-- Conteúdo da página --}}
         @yield('content')
     </main>
 

@@ -9,7 +9,7 @@ class Perfil extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'adm'];
+    protected $fillable = ['nome_completo', 'adm', 'user_id'];
 
     public function user()
     {

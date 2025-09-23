@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Session;
 
 class PerfilController extends Controller
 {
-        // GET e POST para cadastro
     public function cadastrar(Request $request)
     {
         if ($request->isMethod('get')) {
@@ -21,21 +20,12 @@ class PerfilController extends Controller
             return view('usuario.cadastrar');
         }
 
-        // Validação
-        $request->validate([
-            'nome' => 'required|string|max:255',
-            'username' => 'required|string|max:255|unique:users,username',
-            'senha' => 'required|string|min:6',
-        ]);
-
-        // Criação do usuário
         $user = new User();
         $user->name = $request->nome;
         $user->username = $request->username;
-        $user->password = Hash::make($request->senha);
+        $user->password = Hash::make($request->password);
         $user->save();
 
-        // Criação do perfil associado
         $perfil = new Perfil();
         $perfil->user_id = $user->id;
         $perfil->nome_completo = $request->nome;
@@ -54,9 +44,9 @@ class PerfilController extends Controller
             return view('usuario.login');
         }
 
-        $credentials = $request->only('username', 'senha');
+        $credentials = $request->only('username', 'password');
 
-        if (Auth::attempt(['username' => $credentials['username'], 'password' => $credentials['senha']])) {
+        if (Auth::attempt(['username' => $credentials['username'], 'password' => $credentials['password']])) {
             $perfil = Auth::user()->perfil;
             return redirect()->route($perfil->adm ? 'ver_chamados' : 'meus_chamados');
         }
@@ -91,7 +81,7 @@ class PerfilController extends Controller
         $user->username = $request->username;
         $user->save();
 
-        return redirect()->route('ver_funcionarios')->with('success', 'Usuário atualizado com sucesso!');
+        return redirect()->route('adm/ver_funcionarios')->with('success', 'Usuário atualizado com sucesso!');
     }
 
     public function verFuncionarios(Request $request)
@@ -102,13 +92,30 @@ class PerfilController extends Controller
             $query->where('adm', $request->input('adm'));
         }
 
-        $perfil = $query->get();
-        return view('adm/ver_funcionarios', compact('perfil'));
+        $perfil = $query->orderBy('nome_completo')->get();
+        $quantidade = $perfil->count();
+        return view('adm/ver_funcionarios', compact('perfil', 'quantidade'));
     }
 
-    public function editarFuncionarios(Request $request)
+    public function editarFuncionarios(Request $request, $id)
     {
-        //fazer
+        $perfil = Perfil::with('user')->findOrFail($id);
+
+        if ($request->isMethod('get')) {
+            return view('adm/editar_funcionarios', compact('perfil'));
+        }
+
+        if ($request->isMethod('post')) {
+            
+                $perfil->nome_completo = $request->input('nome_completo');
+                $perfil->save();
+
+                $perfil->user->username = $request->input('username');
+                $perfil->user->save();
+
+                return redirect()->route('ver_funcionarios')->with('success', 'Funcionário atualizado com sucesso!');
+
+        }
     }
 
     public function tornarAdm($id)
@@ -117,7 +124,7 @@ class PerfilController extends Controller
         $perfil->adm = true;
         $perfil->save();
 
-        return redirect()->route('usuarios/funcionarios')->with('success', "Usuário {$perfil->nome_completo} agora é um administrador!");
+        return redirect()->route('ver_funcionarios')->with('success', "{$perfil->nome_completo} agora é um administrador!");
     }
 
     public function retirarAdm($id)
@@ -126,6 +133,6 @@ class PerfilController extends Controller
         $perfil->adm = false;
         $perfil->save();
 
-        return redirect()->route('usuarios/funcionarios')->with('success', "Usuário {$perfil->nome_completo} não é mais um administrador!");
+        return redirect()->route('ver_funcionarios')->with('success', "{$perfil->nome_completo} não é mais um administrador!");
     }
 }

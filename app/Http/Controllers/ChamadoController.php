@@ -37,10 +37,11 @@ class ChamadoController extends Controller
 
                 if ($request->hasFile('arquivos')) {
                     foreach ($request->file('arquivos') as $arquivo) {
-                        $path = $arquivo->store('arquivos');
+                        $path = $arquivo->store('arquivos', 'public');
                         Arquivo::create([
                             'chamado_id' => $chamado->id,
-                            'arquivo' => $path
+                            'arquivo' => $path,
+                            'nome_original' => $arquivo->getClientOriginalName()
                         ]);
                     }
                 }
@@ -70,10 +71,11 @@ class ChamadoController extends Controller
 
                 if ($request->hasFile('arquivos')) {
                     foreach ($request->file('arquivos') as $arquivo) {
-                        $path = $arquivo->store('arquivos');
+                        $path = $arquivo->store('arquivos', 'public');
                         Arquivo::create([
                             'chamado_id' => $chamado->id,
-                            'arquivo' => $path
+                            'arquivo' => $path,
+                            'nome_original' => $arquivo->getClientOriginalName()
                         ]);
                     }
                 }
@@ -85,7 +87,7 @@ class ChamadoController extends Controller
         }
     }
 
-    public function verMeusChamados()
+    public function meusChamados()
     {
         $perfil = Auth::user()->perfil;
         $chamados = Chamado::where('autor_id', $perfil->id)->get();
@@ -136,21 +138,6 @@ class ChamadoController extends Controller
         return view('adm/ver_chamado', compact('chamados', 'quantidade'));
     }
 
-    public function verFuncionarios(Request $request)
-    {
-        $tipo = $request->query('adm');
-        $query = Perfil::where('user_id', '!=', Auth::id());
-
-        if ($tipo !== null) {
-            $query->where('adm', $tipo);
-        }
-
-        $perfil = $query->get();
-        $quantidade = $perfil->count();
-
-        return view('adm/ver_funcionarios', compact('perfil', 'quantidade'));
-    }
-
     public function tornarAdm($id)
     {
         $perfil = Perfil::findOrFail($id);
@@ -169,7 +156,7 @@ class ChamadoController extends Controller
         return redirect()->route('funcionarios.ver')->with('success', "Usuário {$perfil->nome_completo} não é mais um administrador!");
     }
 
-    public function verMinhasTarefas()
+    public function minhasTarefas()
     {
         $perfil = Auth::user()->perfil;
         $chamados = Chamado::where('responsavel_id', $perfil->id)
@@ -187,6 +174,6 @@ class ChamadoController extends Controller
         $chamado->status = $status;
         $chamado->save();
 
-        return redirect()->route('tarefas.minhas');
+        return redirect()->route('ver_minhas_tarefas');
     }
 }
