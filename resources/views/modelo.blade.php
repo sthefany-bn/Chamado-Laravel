@@ -25,7 +25,7 @@
                 <div class="d-flex">
                     @if (Auth::user() && Auth::user()->perfil->adm)
                     <div class="dropdown">
-                        <a href="#" class="btn btn-light fw-bold dropdown-toggle me-1" data-bs-toggle="dropdown">
+                        <a href="" class="btn btn-light fw-bold dropdown-toggle me-1" data-bs-toggle="dropdown">
                             Ações Adm
                         </a>
                         <ul class="dropdown-menu">
@@ -74,7 +74,7 @@
     </header>
 
     <main class="container mt-4">
-        {{-- Mensagens de sucesso, erro, etc --}}
+        {{-- mensagens --}}
         @if (session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             {{ session('success') }}
@@ -89,8 +89,10 @@
         </div>
         @endif
 
-        {{-- Conteúdo da página --}}
+        {{-- conteudo --}}
+        <br>
         @yield('content')
+        <br>
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>

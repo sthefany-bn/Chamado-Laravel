@@ -85,7 +85,7 @@
             removeBtn.className = 'btn btn-sm btn-danger';
             removeBtn.onclick = () => {
                 for (let i = 0; i < dataTransfer.items.length; i++) {
-                    if (dataTransfer.items[i].getAsFile().name === file.name) {
+                    if (dataTransfer.items[i].getAsFile().name == file.name) {
                         dataTransfer.items.remove(i);
                         break;
                     }

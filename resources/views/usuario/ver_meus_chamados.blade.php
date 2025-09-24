@@ -37,9 +37,9 @@
                             <td>{{ $i->responsavel->name }}</td>
                             <td>
                                 @if ($i->status == 'em_andamento')
-                                    <span class="badge bg-warning text-black">{{ $i->status }}</span>
-                                @else
-                                    <span class="badge bg-secondary">{{ $i->status }}</span>
+                                    <span class="badge bg-warning text-black">Em andamento</span>
+                                @elseif ($i->status == 'nao_iniciado')
+                                    <span class="badge bg-secondary">Não iniciado</span>
                                 @endif
                             </td>
                             <td class="text-center">
@@ -88,7 +88,7 @@
                             <td>{{ $i->data->format('d/m/Y H:i') }}</td>
                             <td>{{ $i->responsavel->name }}</td>
                             <td>
-                                <span class="badge bg-success">{{ $i->status }}</span>
+                                <span class="badge bg-success">Finalizado</span>
                             </td>
                             <td class="text-center">
                                 <a href="{{ route('ver_detalhes', $i->id) }}" class="btn btn-sm btn-primary px-3">Detalhes</a>                                
@@ -123,7 +123,7 @@
                             <td>{{ $i->data->format('d/m/Y H:i') }}</td>
                             <td>{{ $i->responsavel->name }}</td>
                             <td>
-                                <span class="badge bg-danger">{{ $i->status }}</span>
+                                <span class="badge bg-danger">Cancelado</span>
                             </td>
                             <td class="text-center">
                                 <a href="{{ route('ver_detalhes', $i->id) }}" class="btn btn-sm btn-primary px-3">Detalhes</a>                                

@@ -11,15 +11,17 @@ use Illuminate\Support\Facades\Session;
 
 class PerfilController extends Controller
 {
-    public function cadastrar(Request $request)
+    //cadastrar
+    public function getCadastrar(Request $request)
     {
-        if ($request->isMethod('get')) {
-            if (Auth::check()) {
-                return redirect('/');
-            }
-            return view('usuario.cadastrar');
+        if (Auth::check()) {
+            return redirect('/');
         }
+        return view('usuario.cadastrar');
+    }
 
+    public function postCadastrar(Request $request)
+    {
         $user = new User();
         $user->name = $request->nome;
         $user->username = $request->username;
@@ -35,15 +37,18 @@ class PerfilController extends Controller
         return redirect()->route('login')->with('success', 'Cadastro realizado com sucesso!');
     }
 
-    public function login(Request $request)
-    {
-        if ($request->isMethod('get')) {
-            if (Auth::check()) {
-                return redirect('/');
-            }
-            return view('usuario.login');
-        }
 
+    //login
+    public function getLogin(Request $request)
+    {
+        if (Auth::check()) {
+            return redirect('/');
+        }
+        return view('usuario.login');
+    }
+
+    public function postLogin(Request $request)
+    {
         $credentials = $request->only('username', 'password');
 
         if (Auth::attempt(['username' => $credentials['username'], 'password' => $credentials['password']])) {
@@ -54,6 +59,8 @@ class PerfilController extends Controller
         return redirect()->route('login')->with('error', 'Username ou senha inválidos!');
     }
 
+
+    //saida
     public function sair(Request $request)
     {
         Auth::logout();
@@ -61,6 +68,8 @@ class PerfilController extends Controller
         return redirect()->route('login')->with('success', 'Logout realizado com sucesso!');
     }
 
+
+    //adm -> funcionarios
     public function verFuncionarios(Request $request)
     {
         $query = Perfil::where('user_id', '!=', Auth::id())
@@ -68,39 +77,36 @@ class PerfilController extends Controller
                 $q->where('name', '!=', 'Admin');
             });
 
-        // Se veio filtro 'adm' no request, adiciona condição
         if ($request->has('adm')) {
             $query->where('adm', $request->input('adm'));
         }
 
-        // Ordena e executa a query
         $perfil = $query->orderBy('nome_completo')->get();
-
         $quantidade = $perfil->count();
 
         return view('adm/ver_funcionarios', compact('perfil', 'quantidade'));
     }
 
-    public function editarFuncionarios(Request $request, $id)
+    public function getEditarFuncionarios(Request $request, $id)
     {
         $perfil = Perfil::with('user')->findOrFail($id);
-
-        if ($request->isMethod('get')) {
-            return view('adm/editar_funcionarios', compact('perfil'));
-        }
-
-        if ($request->isMethod('post')) {
-
-            $perfil->nome_completo = $request->input('nome_completo');
-            $perfil->save();
-
-            $perfil->user->username = $request->input('username');
-            $perfil->user->save();
-
-            return redirect()->route('ver_funcionarios')->with('success', 'Funcionário atualizado com sucesso!');
-        }
+        return view('adm/editar_funcionarios', compact('perfil'));
     }
 
+    public function postEditarFuncionarios(Request $request, $id)
+    {
+        $perfil = Perfil::with('user')->findOrFail($id);
+        $perfil->nome_completo = $request->input('nome_completo');
+        $perfil->save();
+
+        $perfil->user->username = $request->input('username');
+        $perfil->user->save();
+
+        return redirect()->route('ver_funcionarios')->with('success', 'Funcionário atualizado com sucesso!');
+    }
+
+
+    //mudar funcionario -> adm
     public function tornarAdm($id)
     {
         $perfil = Perfil::findOrFail($id);
@@ -110,6 +116,7 @@ class PerfilController extends Controller
         return redirect()->route('ver_funcionarios')->with('success', "{$perfil->nome_completo} agora é um administrador!");
     }
 
+    //mudar adm -> funcionario
     public function retirarAdm($id)
     {
         $perfil = Perfil::findOrFail($id);

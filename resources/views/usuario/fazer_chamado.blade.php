@@ -44,40 +44,29 @@
 
     fileInput.addEventListener('change', function () {
         for (const file of this.files) {
-            // Verifica se o arquivo já foi adicionado para evitar duplicatas
-            let exists = false;
-            for (let i = 0; i < dataTransfer.items.length; i++) {
-                if (dataTransfer.items[i].getAsFile().name === file.name) {
-                    exists = true;
-                    break;
-                }
-            }
-            if (!exists) {
-                dataTransfer.items.add(file);
+            dataTransfer.items.add(file);
+            const li = document.createElement('li');
+            li.className = 'list-group-item d-flex justify-content-between align-items-center';
+            li.textContent = file.name;
 
-                const li = document.createElement('li');
-                li.className = 'list-group-item d-flex justify-content-between align-items-center';
-                li.textContent = file.name;
-
-                const removeBtn = document.createElement('button');
-                removeBtn.textContent = 'Remover';
-                removeBtn.className = 'btn btn-sm btn-danger';
-
-                removeBtn.onclick = () => {
-                    for (let i = 0; i < dataTransfer.items.length; i++) {
-                        if (dataTransfer.items[i].getAsFile().name === file.name) {
-                            dataTransfer.items.remove(i);
-                            break;
-                        }
+            const removeBtn = document.createElement('button');
+            removeBtn.textContent = 'Remover';
+            removeBtn.className = 'btn btn-sm btn-danger';
+            removeBtn.onclick = () => {
+                for (let i = 0; i < dataTransfer.items.length; i++) {
+                    if (dataTransfer.items[i].getAsFile().name == file.name) {
+                        dataTransfer.items.remove(i);
+                        break;
                     }
-                    fileInput.files = dataTransfer.files;
-                    li.remove();
-                };
+                }
+                fileInput.files = dataTransfer.files;
+                li.remove();
+            };
 
-                li.appendChild(removeBtn);
-                fileLista.appendChild(li);
-            }
+            li.appendChild(removeBtn);
+            fileLista.appendChild(li);
         }
+
         fileInput.files = dataTransfer.files;
     });
 </script>

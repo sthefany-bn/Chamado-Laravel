@@ -17,76 +17,7 @@ class ChamadoController extends Controller
         $this->middleware('auth');
     }
 
-    public function fazerChamado(Request $request)
-    {
-        if ($request->isMethod('get')) {
-            $perfis = Perfil::where('adm', true)->where('id', '!=', 1)->get();
-            return view('usuario/fazer_chamado', compact('perfis'));
-        }
-
-        if ($request->isMethod('post')) {
-            try {
-                $chamado = new Chamado();
-                $chamado->titulo = $request->input('titulo');
-                $chamado->descricao = $request->input('descricao');
-                $chamado->status = 'nao_iniciado';
-                $chamado->data = now();
-                $chamado->autor_id = Auth::user()->perfil->id;
-                $chamado->responsavel_id = $request->input('responsavel');
-                $chamado->save();
-
-                if ($request->hasFile('arquivos')) {
-                    foreach ($request->file('arquivos') as $arquivo) {
-                        $path = $arquivo->store('arquivos', 'public');
-                        Arquivo::create([
-                            'chamado_id' => $chamado->id,
-                            'arquivo' => $path,
-                            'nome_original' => $arquivo->getClientOriginalName()
-                        ]);
-                    }
-                }
-
-                return redirect()->route('meus_chamados')->with('success', 'Chamado enviado com sucesso!');
-            } catch (\Exception $e) {
-                return redirect()->route('meus_chamados')->with('error', 'Erro ao enviar chamado!');
-            }
-        }
-    }
-
-    public function editarChamado(Request $request, $id)
-    {
-        $chamado = Chamado::findOrFail($id);
-        $perfis = Perfil::where('adm', true)->get();
-
-        if ($request->isMethod('get')) {
-            return view('usuario/editar_chamado', compact('chamado', 'perfis'));
-        }
-
-        if ($request->isMethod('post')) {
-            try {
-                $chamado->titulo = $request->input('titulo');
-                $chamado->descricao = $request->input('descricao');
-                $chamado->responsavel_id = $request->input('responsavel');
-                $chamado->save();
-
-                if ($request->hasFile('arquivos')) {
-                    foreach ($request->file('arquivos') as $arquivo) {
-                        $path = $arquivo->store('arquivos', 'public');
-                        Arquivo::create([
-                            'chamado_id' => $chamado->id,
-                            'arquivo' => $path,
-                            'nome_original' => $arquivo->getClientOriginalName()
-                        ]);
-                    }
-                }
-
-                return redirect()->route('meus_chamados')->with('success', 'Chamado atualizado com sucesso!');
-            } catch (\Exception $e) {
-                return redirect()->route('meus_chamados')->with('error', 'Erro ao atualizar chamado!');
-            }
-        }
-    }
-
+    //chamados
     public function meusChamados()
     {
         $perfil = Auth::user()->perfil;
@@ -97,6 +28,80 @@ class ChamadoController extends Controller
         $cancelados = $chamados->where('status', 'cancelado')->count();
 
         return view('usuario/ver_meus_chamados', compact('perfil', 'chamados', 'ativos', 'finalizados', 'cancelados'));
+    }
+
+    public function getFazerChamado(Request $request)
+    {
+        $perfis = Perfil::where('adm', true)->where('id', '!=', 1)->get();
+        return view('usuario/fazer_chamado', compact('perfis'));
+    }
+
+    public function postFazerChamado(Request $request)
+    {
+        try {
+            $chamado = new Chamado();
+            $chamado->titulo = $request->input('titulo');
+            $chamado->descricao = $request->input('descricao');
+            $chamado->status = 'nao_iniciado';
+            $chamado->data = now();
+            $chamado->autor_id = Auth::user()->perfil->id;
+            $chamado->responsavel_id = $request->input('responsavel');
+            $chamado->save();
+
+            if ($request->hasFile('arquivos')) {
+                foreach ($request->file('arquivos') as $arquivo) {
+                    $path = $arquivo->store('arquivos', 'public');
+                    Arquivo::create([
+                        'chamado_id' => $chamado->id,
+                        'arquivo' => $path,
+                        'nome_original' => $arquivo->getClientOriginalName()
+                    ]);
+                }
+            }
+
+            return redirect()->route('meus_chamados')->with('success', 'Chamado enviado com sucesso!');
+        } catch (\Exception $e) {
+            return redirect()->route('meus_chamados')->with('error', 'Erro ao enviar chamado!');
+        }
+    }
+
+    public function getEditarChamado(Request $request, $id)
+    {
+        $chamado = Chamado::findOrFail($id);
+        $perfis = Perfil::where('adm', true)->get();
+        return view('usuario/editar_chamado', compact('chamado', 'perfis'));
+    }
+
+    public function postEditarChamado(Request $request, $id)
+    {
+        $chamado = Chamado::findOrFail($id);
+        try {
+            $chamado->titulo = $request->input('titulo');
+            $chamado->descricao = $request->input('descricao');
+            $chamado->responsavel_id = $request->input('responsavel');
+            $chamado->save();
+
+            if ($request->hasFile('arquivos')) {
+                foreach ($request->file('arquivos') as $arquivo) {
+                    $path = $arquivo->store('arquivos', 'public');
+                    Arquivo::create([
+                        'chamado_id' => $chamado->id,
+                        'arquivo' => $path,
+                        'nome_original' => $arquivo->getClientOriginalName()
+                    ]);
+                }
+            }
+
+            return redirect()->route('meus_chamados')->with('success', 'Chamado atualizado com sucesso!');
+        } catch (\Exception $e) {
+            return redirect()->route('meus_chamados')->with('error', 'Erro ao atualizar chamado!');
+        }
+    }
+
+    public function verDetalhes($id)
+    {
+        $chamado = Chamado::with('arquivos')->findOrFail($id);
+        return view('usuario/ver_detalhes', compact('chamado'));
     }
 
     public function cancelarChamado($id)
@@ -111,6 +116,8 @@ class ChamadoController extends Controller
         }
     }
 
+
+    //arquivos
     public function removerArquivo($id)
     {
         $arquivo = Arquivo::findOrFail($id);
@@ -119,17 +126,11 @@ class ChamadoController extends Controller
         return back()->with('success', 'Arquivo deletado com sucesso!');
     }
 
-    public function verDetalhes($id)
-    {
-        $chamado = Chamado::with('arquivos')->findOrFail($id);
-        return view('usuario/ver_detalhes', compact('chamado'));
-    }
 
-    // ADMIN
+    //adm
     public function verChamados(Request $request)
     {
         $status = $request->query('status');
-
         $query = Chamado::orderBy('titulo', 'asc');
 
         if ($status) {
@@ -137,45 +138,28 @@ class ChamadoController extends Controller
         }
 
         $chamados = $query->get();
-
         $quantidade = $chamados->count();
 
         return view('adm/ver_chamado', compact('chamados', 'quantidade'));
     }
 
-
-    public function tornarAdm($id)
-    {
-        $perfil = Perfil::findOrFail($id);
-        $perfil->adm = true;
-        $perfil->save();
-
-        return redirect()->route('funcionarios.ver')->with('success', "{$perfil->nome_completo} agora é um administrador!");
-    }
-
-    public function retirarAdm($id)
-    {
-        $perfil = Perfil::findOrFail($id);
-        $perfil->adm = false;
-        $perfil->save();
-
-        return redirect()->route('funcionarios.ver')->with('success', "{$perfil->nome_completo} não é mais um administrador!");
-    }
-
     public function minhasTarefas()
     {
         $perfil = Auth::user()->perfil;
-        $chamados = Chamado::where('responsavel_id', $perfil->id)
+        $chamadosAtivos = Chamado::where('responsavel_id', $perfil->id)
             ->whereNotIn('status', ['cancelado', 'finalizado'])
             ->orderBy('data', 'desc')
             ->get();
 
-        $quantidade = $chamados->count();
+        $chamadosInativos = Chamado::where('responsavel_id', $perfil->id)
+            ->whereIn('status', ['cancelado', 'finalizado'])
+            ->orderBy('data', 'desc')
+            ->get();
 
-        return view('adm/ver_minhas_tarefas', compact('chamados', 'quantidade'));
+        return view('adm/ver_minhas_tarefas', compact('chamadosAtivos', 'chamadosInativos'));
     }
 
-    public function ifc($id, $status)
+    public function ifc($id, $status) //iniciar, finalizar, cancelar
     {
         $chamado = Chamado::findOrFail($id);
         $chamado->status = $status;

@@ -39,13 +39,13 @@
                 <td>
                     <p>
                         @if ($i->status == 'finalizado')
-                            <span class="badge bg-success">{{ $i->status }}</span>
+                            <span class="badge bg-success">Finalizado</span>
                         @elseif ($i->status == 'em_andamento')
-                            <span class="badge bg-warning text-black">{{ $i->status }}</span>
+                            <span class="badge bg-warning text-black">Em andamento</span>
                         @elseif ($i->status == 'cancelado')
-                            <span class="badge bg-danger">{{ $i->status }}</span>
-                        @else
-                            <span class="badge bg-secondary">{{ $i->status }}</span>
+                            <span class="badge bg-danger">Cancelado</span>
+                        @elseif ($i->status == 'nao_iniciado')
+                            <span class="badge bg-secondary">Não iniciado</span>
                         @endif
                     </p>
                 </td>

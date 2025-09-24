@@ -12,8 +12,6 @@
     </form>
 </div>
 
-<br>
-
 <h1 class="fw-bold">Funcionários</h1>
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h6 class="mb-0">Quantidade: {{ $quantidade }}</h6>
@@ -34,7 +32,7 @@
             <tr>
                 <td>{{$i->nome_completo}}</td>
                 <td>{{$i->user->username}}</td>
-                <td>@if ($i->adm) Adiministrador @else Funcionário @endif</td>
+                <td>{{ $i->adm ? 'Adiministrador' : 'Funcionário' }}</td>
                 <td class="text-center">
                     <a href="{{ route('editar_funcionarios', $i->id) }}" class="btn btn-sm btn-success px-3">Editar</a>
                     <a href="{{ route('tornar_adm', $i->id) }}" class="btn btn-sm btn-warning" onclick="return confirmarAdm('{{ $i->nome_completo }}');">Permição de Adm</a>
