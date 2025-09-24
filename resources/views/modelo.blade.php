@@ -25,9 +25,9 @@
                 <div class="d-flex">
                     @if (Auth::user() && Auth::user()->perfil->adm)
                     <div class="dropdown">
-                        <a href="" class="btn btn-light fw-bold dropdown-toggle me-1" data-bs-toggle="dropdown">
+                        <button class="btn btn-light fw-bold dropdown-toggle me-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Ações Adm
-                        </a>
+                        </button>
                         <ul class="dropdown-menu">
                             <li>
                                 <a class="dropdown-item" href="{{ route('ver_chamados') }}">
@@ -54,19 +54,32 @@
                                     <i class="bi bi-plus-circle me-2 text-black"></i> Criar chamado
                                 </a>
                             </li>
-                            <li>
-                                <a class="dropdown-item" href="{{ route('editar_funcionarios', Auth::id()) }}">
-                                    <i class="bi bi-pencil-square me-2 text-danger"></i>Editar meu perfil
-                                </a>
-                            </li>
                         </ul>
                     </div>
                     @endif
+
                     @auth
-                    <form action="{{ route('sair') }}" method="POST" onsubmit="return confirmarSair('{{ Auth::user()->name }}');">
-                        @csrf
-                        <button type="submit" class="btn btn-light fw-bold me-1">Sair</button>
-                    </form>
+                    <div class="dropdown">
+                        <button class="btn btn-light fw-bold dropdown-toggle me-1" type="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle"> {{ Auth::user()->name }}</i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <a href="{{ route('editar_funcionarios', Auth::id()) }}" class="dropdown-item">
+                                    <i class="bi bi-pencil-square me-2 text-primary"></i>Editar perfil
+                                </a>
+                            </li>
+                            <li>
+                                <form action="{{ route('sair') }}" method="POST" onsubmit="return confirmarSair('{{ Auth::user()->name }}');" class="dropdown-item m-0 p-0">
+                                    @csrf
+                                    <button type="submit" class="btn btn-link dropdown-item text-start">
+                                        <i class="bi bi-box-arrow-left me-2 text-danger"></i>Sair
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
                     @endauth
                 </div>
             </div>

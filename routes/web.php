@@ -36,7 +36,7 @@ Route::middleware(['auth'])->group(function () {
     //adm -> funcionarios 
     Route::get('/ver_funcionarios', [PerfilController::class, 'verFuncionarios'])->name('ver_funcionarios');
     Route::get('/editar_funcionarios/{id}', [PerfilController::class, 'getEditarFuncionarios'])->name('editar_funcionarios');
-    Route::post('/editar_funcionarios/{id}', [PerfilController::class, 'postEeditarFuncionarios'])->name('atualizar_funcionarios');
+    Route::post('/editar_funcionarios/{id}', [PerfilController::class, 'postEditarFuncionarios'])->name('atualizar_funcionarios');
     Route::get('/tornar_adm/{id}', [PerfilController::class, 'tornarAdm'])->name('tornar_adm');
     Route::get('/retirar_adm/{id}', [PerfilController::class, 'retirarAdm'])->name('retirar_adm');
 });

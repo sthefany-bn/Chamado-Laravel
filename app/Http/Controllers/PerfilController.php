@@ -102,7 +102,11 @@ class PerfilController extends Controller
         $perfil->user->username = $request->input('username');
         $perfil->user->save();
 
-        return redirect()->route('ver_funcionarios')->with('success', 'Funcionário atualizado com sucesso!');
+        if (Auth::user()->perfil->adm) {
+            return redirect()->route('ver_funcionarios')->with('success', 'Funcionário atualizado com sucesso!');
+        } else {
+            return redirect()->route('meus_chamados')->with('success', 'Funcionário atualizado com sucesso!');
+        }
     }
 
 
