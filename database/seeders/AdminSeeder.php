@@ -14,7 +14,7 @@ class AdminSeeder extends Seeder
         $user = User::firstOrCreate(
             ['username' => 'admin'],
             [
-                'name' => 'Admin',
+                'name' => 'Administrador',
                 'password' => Hash::make(env('ADMIN_PASSWORD', 'admin')),
                 'username_verified_at' => now(),
             ]
