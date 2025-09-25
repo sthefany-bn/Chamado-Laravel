@@ -33,7 +33,7 @@
                     @if ($i->status != 'finalizado' && $i->status != 'cancelado')
                         <tr>
                             <td>{{ $i->titulo }}</td>
-                            <td>{{ $i->data->format('d/m/Y H:i') }}</td>
+                            <td>{{ $i->data->format('d/m/Y - H:i') }}</td>
                             <td>{{ $i->responsavel->name }}</td>
                             <td>
                                 @if ($i->status == 'em_andamento')
@@ -85,7 +85,7 @@
                     @if ($i->status == 'finalizado')
                         <tr>
                             <td>{{ $i->titulo }}</td>
-                            <td>{{ $i->data->format('d/m/Y H:i') }}</td>
+                            <td>{{ $i->data->format('d/m/Y - H:i') }}</td>
                             <td>{{ $i->responsavel->name }}</td>
                             <td>
                                 <span class="badge bg-success">Finalizado</span>
@@ -120,7 +120,7 @@
                     @if ($i->status == 'cancelado')
                         <tr class="text-decoration-line-through text-muted">
                             <td>{{ $i->titulo }}</td>
-                            <td>{{ $i->data->format('d/m/Y H:i') }}</td>
+                            <td>{{ $i->data->format('d/m/Y - H:i') }}</td>
                             <td>{{ $i->responsavel->name }}</td>
                             <td>
                                 <span class="badge bg-danger">Cancelado</span>

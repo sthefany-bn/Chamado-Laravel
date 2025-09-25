@@ -1,6 +1,6 @@
 @extends('modelo')
 
-@section('title', 'Editar')
+@section('title', 'Editar Funcionários')
 
 @section('content')
 <div class="container d-flex justify-content-center mt-5">

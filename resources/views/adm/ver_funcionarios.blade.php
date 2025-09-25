@@ -1,6 +1,6 @@
 @extends('modelo')
 
-@section('title', 'Editar')
+@section('title', 'Funcionários')
 
 @section('content')
 

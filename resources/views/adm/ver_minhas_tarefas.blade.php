@@ -26,7 +26,7 @@
             @foreach ($chamadosAtivos as $i)
                 <tr>
                     <td>{{ $i->titulo }}</td>
-                    <td>{{ $i->data->format('d/m/Y H:i') }}</td>
+                    <td>{{ $i->data->format('d/m/Y - H:i') }}</td>
                     <td>{{ $i->autor->name }}</td>
                     <td>
                         @if ($i->status == 'em_andamento')
@@ -91,7 +91,7 @@
             @foreach ($chamadosInativos as $i)
                 <tr>
                     <td>{{ $i->titulo }}</td>
-                    <td>{{ $i->data->format('d/m/Y H:i') }}</td>
+                    <td>{{ $i->data->format('d/m/Y - H:i') }}</td>
                     <td>{{ $i->autor->name }}</td>
                     <td>
                         @if ($i->status == 'finalizado')

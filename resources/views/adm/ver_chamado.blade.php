@@ -1,6 +1,6 @@
 @extends('modelo')
 
-@section('title', 'Editar')
+@section('title', 'Chamados')
 
 @section('content')
 
@@ -34,7 +34,7 @@
             @foreach ($chamados as $i)
             <tr>
                 <td>{{ $i->titulo }}</td>
-                <td>{{ $i->data->format('d/m/Y H:i') }}</td>
+                <td>{{ $i->data->format('d/m/Y - H:i') }}</td>
                 <td>{{ $i->autor->name }}</td>
                 <td>
                     <p>

@@ -12,7 +12,7 @@
         <div class="mb-3">
             <small class="text-muted">
                 <i class="bi bi-calendar-event me-1"></i>
-                Criado em {{ $chamado->data }}
+                Criado em {{ $chamado->data->format('d/m/Y - H:i') }}
             </small>
         </div>
         <hr>
