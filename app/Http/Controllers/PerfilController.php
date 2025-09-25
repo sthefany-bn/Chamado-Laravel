@@ -93,9 +93,6 @@ class PerfilController extends Controller
 
     public function getEditarFuncionarios(Request $request, $id)
     {
-        if (!Auth::user() || !Auth::user()->adm) {
-            abort(403, 'Acesso negado');
-        }
         $perfil = Perfil::with('user')->findOrFail($id);
         return view('adm/editar_funcionarios', compact('perfil'));
     }
