@@ -130,6 +130,10 @@ class ChamadoController extends Controller
     //adm
     public function verChamados(Request $request)
     {
+        if (!Auth::user()->adm) {
+            abort(403, 'Acesso negado');
+        }
+
         $status = $request->query('status');
         $query = Chamado::orderBy('titulo', 'asc');
 
@@ -145,6 +149,10 @@ class ChamadoController extends Controller
 
     public function minhasTarefas()
     {
+        if (!Auth::user()->adm) {
+            abort(403, 'Acesso negado');
+        }
+
         $perfil = Auth::user()->perfil;
         $chamadosAtivos = Chamado::where('responsavel_id', $perfil->id)
             ->whereNotIn('status', ['cancelado', 'finalizado'])
@@ -161,6 +169,10 @@ class ChamadoController extends Controller
 
     public function ifc($id, $status) //iniciar, finalizar, cancelar
     {
+        if (!Auth::user()->adm) {
+            abort(403, 'Acesso negado');
+        }
+
         $chamado = Chamado::findOrFail($id);
         $chamado->status = $status;
         $chamado->save();

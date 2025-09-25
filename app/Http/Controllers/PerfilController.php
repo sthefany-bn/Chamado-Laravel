@@ -72,6 +72,10 @@ class PerfilController extends Controller
     //adm -> funcionarios
     public function verFuncionarios(Request $request)
     {
+        if (!Auth::user() || !Auth::user()->adm) {
+            abort(403, 'Acesso negado');
+        }
+
         $query = Perfil::where('user_id', '!=', Auth::id())
             ->whereHas('user', function ($q) {
                 $q->where('username', '!=', 'admin');
@@ -89,6 +93,9 @@ class PerfilController extends Controller
 
     public function getEditarFuncionarios(Request $request, $id)
     {
+        if (!Auth::user() || !Auth::user()->adm) {
+            abort(403, 'Acesso negado');
+        }
         $perfil = Perfil::with('user')->findOrFail($id);
         return view('adm/editar_funcionarios', compact('perfil'));
     }
@@ -113,6 +120,10 @@ class PerfilController extends Controller
     //mudar funcionario -> adm
     public function tornarAdm($id)
     {
+        if (!Auth::user() || !Auth::user()->adm) {
+            abort(403, 'Acesso negado');
+        }
+
         $perfil = Perfil::findOrFail($id);
         $perfil->adm = true;
         $perfil->save();
@@ -123,6 +134,10 @@ class PerfilController extends Controller
     //mudar adm -> funcionario
     public function retirarAdm($id)
     {
+        if (!Auth::user() || !Auth::user()->adm) {
+            abort(403, 'Acesso negado');
+        }
+
         $perfil = Perfil::findOrFail($id);
         $perfil->adm = false;
         $perfil->save();
