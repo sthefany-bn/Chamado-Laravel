@@ -74,7 +74,7 @@ class PerfilController extends Controller
     {
         $query = Perfil::where('user_id', '!=', Auth::id())
             ->whereHas('user', function ($q) {
-                $q->where('name', '!=', 'Admin');
+                $q->where('username', '!=', 'admin');
             });
 
         if ($request->has('adm')) {
